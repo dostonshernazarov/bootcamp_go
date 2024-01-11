@@ -8,8 +8,11 @@ import (
 
 func main(){
 
+var a string = "Hello"
+b := a
 
-	
+
+
 }
 
 
