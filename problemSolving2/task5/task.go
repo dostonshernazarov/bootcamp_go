@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"math"
 )
 
@@ -10,7 +11,7 @@ func main(){
 
 var a string = "Hello"
 b := a
-
+ fmt.Println(b)
 
 
 }

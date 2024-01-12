@@ -8,85 +8,72 @@ import (
 	_ "github.com/lib/pq"
 )
 
-type Autor_book struct {
-	ID       int
-	Autor_id int
-	Book_id  int
+type Users struct {
+	ID int
+	Full_name string
+	Username string
+	Message Messages
 }
 
-type Autors struct {
-	ID         int
-	Full_name  string
-	Birth_date int
-	Books      Books
+type Messages struct{
+	ID int
+	MSG_text string
 }
 
-type Books struct {
-	ID    int
-	Title string
-	Year  int
+type User_massage struct {
+	ID int
+	User_id int
+	Message_id int
 }
 
 func main() {
 
-	connStr := "user=doston password=doston dbname=najot_talim sslmode=disable"
-	db, err := sql.Open("postgres", connStr)
+	conStr := "user=doston password=doston dbname=najot_talim sslmode=disable"
+	db, err := sql.Open("postgres", conStr)
 
 	if err != nil {
 		panic(err)
 	}
-
 	defer db.Close()
 
-	if err != nil {
-		panic(err)
-	}
-
-	resAutor := []byte(`
-		{
-			"full_name":"Oybek",
-			"bith_date":1955,
-			"books": {
-				"title": "A.Navoiy",
-				"year":1999
-			}
+	respMsg := []byte(`
+	{
+		"full_name":"Oybek atamatov",
+		"username":"oybekDM",
+		"message":{
+			"msg_text":"hello world"
 		}
+	}
 	`)
 
-	var autor1 Autors
+	var user1 Users
 
-	if err := json.Unmarshal(resAutor, &autor1); err != nil {
+	if err = json.Unmarshal(respMsg, &user1); err!= nil{
 		panic(err)
 	}
 
-	var resAuto Autors
+	var reqUserId Users
 
-	rowAutor := db.QueryRow(`INSERT INTO autors (full_name, birth_date) VALUES ($1, $2) returning id`, autor1.Full_name, autor1.Birth_date)
+	rowUser := db.QueryRow(`INSERT INTO users (full_name, username) VALUES ($1,$2) returning id`, user1.Full_name, user1.Username)	
 
-	if err1 := rowAutor.Scan(&resAuto.ID); err1 != nil {
-		panic(err1)
+	if err = rowUser.Scan(&reqUserId.ID); err!=nil {
+		panic(err)
 	}
+	
+	var reqMsgId Messages
 
-	fmt.Println("Autor added in table", resAuto.ID)
-
-	var resBook Autors
-
-	rowBook := db.QueryRow(`INSERT INTO books (title, year) VALUES ($1,$2) returning id`, autor1.Books.Title, autor1.Books.Year)
-
-	if err = rowBook.Scan(&resBook.Books.ID); err != nil {
+	rowMsg := db.QueryRow(`INSERT INTO messages (message_text) VALUES ($1) returning id`,user1.Message.MSG_text)
+	if err = rowMsg.Scan(&reqMsgId.ID); err!=nil {
 		panic(err)
 	}
 
-	fmt.Println("Book added in table", resBook.Books.ID)
-
-	var resAutorBook Autor_book
-
-	row_book_autor := db.QueryRow(`INSERT INTO autor_book (autor_id, book_id) VALUES ($1, $2) returning autor_id`, resAuto.ID, resBook.Books.ID)
-
-	if err = row_book_autor.Scan(&resAutorBook.Autor_id); err != nil {
+	var U_M User_massage
+	rowUM := db.QueryRow(`INSERT INTO user_message (usera, message_id) VALUES ($1,$2) returning id`,reqUserId.ID,reqMsgId.ID)
+	if err := rowUM.Scan(&U_M.ID); err!=nil {
 		panic(err)
 	}
 
-	fmt.Println("book_id and autor_id added in table")
+	fmt.Println(U_M.ID)
+
 
 }
