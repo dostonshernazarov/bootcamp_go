@@ -1,23 +1,21 @@
 package main
 
 import (
-	"log"
-	"net"
+	"fmt"
+	"net/http"
 )
 
 func main() {
-	ln, err := net.Listen("tcp", "127.0.0.1:8081")
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+
+		var input string
+		fmt.Scan(&input)
+		fmt.Fprint(w, input)
+	})
+
+	err := http.ListenAndServe("127.0.0.1:8081", nil)
 	if err != nil {
-		log.Println(err)
-	}
-	defer ln.Close()
-	// Открываем порт
-	conn, err := ln.Accept()
-	if err != nil {
-		log.Println(err)
-	}
-	_, err = conn.Write([]byte("message"))
-	if err != nil {
-		log.Println(err)
+		fmt.Println(err)
 	}
 }
