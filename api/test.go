@@ -23,8 +23,8 @@ type ResponseData struct {
 
 func main() {
 
+	var codeFrom, codeTo, wordFrom, checkFrom string
 	for {
-		var lanFrom, lanTo, codeFrom, codeTo, checkFrom, checkTo string
 
 		lanCheck := "Choole language: \n For English press -> 1 \n For Russian press -> 2 "
 
@@ -33,18 +33,33 @@ func main() {
 
 		if checkFrom == "1" {
 			codeFrom = "en"
-			return
+			codeTo = "ru"
+			fmt.Print("Write word: ")
+			fmt.Scan(&wordFrom)
+			break
+
 		} else if checkFrom == "2" {
 			codeFrom = "ru"
-			return
+			codeTo = "en"
+			fmt.Print("Напиши слово: ")
+			fmt.Scan(&wordFrom)
+			break
+
 		} else {
 			fmt.Println("Error Language \n")
+			continue
 		}
+
 	}
+
+	//httpReq := ("source=en&target=ru&q=Hello%2C%20world!")
+
+	result := fmt.Sprintf("%s%s%s%s%s", "source=", codeFrom, "&target=", codeTo, "&q=", wordFrom)
+	//fmt.Println(result)
 
 	url := "https://google-translate1.p.rapidapi.com/language/translate/v2"
 
-	payload := strings.NewReader("source=en&target=ru&q=Hello%2C%20world!")
+	payload := strings.NewReader(result)
 
 	req, _ := http.NewRequest("POST", url, payload)
 
