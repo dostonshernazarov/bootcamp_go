@@ -83,6 +83,6 @@ func main() {
 		return
 	}
 
-	pp.Println(response.Data.Translations[0].TranslatedText)
+	pp.Println(response)
 
 }
