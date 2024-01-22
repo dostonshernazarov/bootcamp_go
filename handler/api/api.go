@@ -105,3 +105,7 @@ func GettAllUsers(w http.ResponseWriter, r *http.Request) {
 	w.Write(respBody)
 
 }
+
+func GetUserById(w http.ResponseWriter, r *http.Request) {
+
+}
