@@ -55,7 +55,7 @@ func main() {
 	http.HandleFunc("/user/update", UpdateUserByID)
 	http.HandleFunc("/user/delete", DeleteUserByID)
 	err := http.ListenAndServe("localhost:8082", nil)
-	log.Println("Server is running")
+	fmt.Println("Server is running")
 	if err != nil {
 		fmt.Println("Error while running server")
 
