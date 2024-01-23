@@ -2,6 +2,7 @@ package storage
 
 import (
 	"database/sql"
+	"fmt"
 	_ "github.com/lib/pq"
 	model "nt_bootcamp/bootcamp_go/handler/models"
 )
@@ -37,7 +38,7 @@ func CreateUser(user *model.User) (*model.User, error) {
 
 }
 
-func GetUser(user *model.User) (*model.User, error) {
+func GetUser(userID string) (*model.User, error) {
 	db, err := connect()
 	if err != nil {
 		return nil, err
@@ -45,14 +46,14 @@ func GetUser(user *model.User) (*model.User, error) {
 	defer db.Close()
 
 	respUser := model.User{}
-	row, err := db.Query(`SELECT id, first_name,last_name FROM users WHERE id=$1`, user.ID)
+	err = db.QueryRow(`SELECT id, first_name,last_name FROM users WHERE id=$1`, userID).Scan(
+		&respUser.ID,
+		&respUser.FirstName,
+		&respUser.LastName)
 	if err != nil {
 		return nil, err
 	}
-	err = row.Scan(&respUser.ID, &respUser.FirstName, &respUser.LastName)
-	if err != nil {
-		return nil, err
-	}
+
 	return &respUser, nil
 }
 
@@ -81,4 +82,33 @@ func GetAll(page, limit int) (users []*model.User, err error) {
 	}
 
 	return users, nil
+}
+
+func UpdateUserById(user *model.User) (*model.User, error) {
+	db, err := connect()
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+
+	_, err = db.Exec("UPDATE users SET first_name = $1, last_name = $2 where id = $3", user.FirstName, user.LastName, user.ID)
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func DeleteUserByID(userID string) error {
+	db, err := connect()
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	_, err = db.Exec("DELETE FROM users WHERE id = $1", userID)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Student and associated references successfully deleted with ID: %v\n", userID)
+	return nil
 }
